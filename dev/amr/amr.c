@@ -90,6 +90,10 @@ __FBSDID("$FreeBSD$");
 #define AMR_DEFINE_TABLES
 #include <dev/amr/amr_tables.h>
 
+#if __FreeBSD_version < 1400000
+#define	bus_attach_children(dev)	bus_generic_attach(dev)
+#endif
+
 SYSCTL_NODE(_hw, OID_AUTO, amr, CTLFLAG_RD | CTLFLAG_MPSAFE, 0,
     "AMR driver parameters");
 
@@ -259,7 +263,7 @@ amr_attach(struct amr_softc *sc)
     if (child != NULL) {
 	device_set_softc(child, sc);
 	device_set_desc(child, "SCSI Passthrough Bus");
-	bus_generic_attach(sc->amr_dev);
+	bus_attach_children(sc->amr_dev);
     }
 
     /*
@@ -301,7 +305,7 @@ amr_startup(void *arg)
 {
     struct amr_softc	*sc = (struct amr_softc *)arg;
     struct amr_logdrive	*dr;
-    int			i, error;
+    int			i;
     
     debug_called(1);
 
@@ -332,8 +336,7 @@ amr_startup(void *arg)
 	}
     }
     
-    if ((error = bus_generic_attach(sc->amr_dev)) != 0)
-	device_printf(sc->amr_dev, "bus_generic_attach returned %d\n", error);
+    bus_attach_children(sc->amr_dev);
     
     /* mark controller back up */
     sc->amr_state &= ~AMR_STATE_SHUTDOWN;
@@ -582,16 +585,15 @@ amr_linux_ioctl_int(struct cdev *dev, u_long cmd, caddr_t addr, int32_t flag,
     case 0x82:
 	switch(ali.ui.fcs.subopcode) {
 	case 'e':
-	    copyout(&linux_version, (void *)(uintptr_t)ali.data,
+	    error = copyout(&linux_version, (void *)(uintptr_t)ali.data,
 		sizeof(linux_version));
-	    error = 0;
 	    break;
 
 	case 'm':
-	    copyout(&linux_no_adapter, (void *)(uintptr_t)ali.data,
+	    error = copyout(&linux_no_adapter, (void *)(uintptr_t)ali.data,
 		sizeof(linux_no_adapter));
-	    td->td_retval[0] = linux_no_adapter;
-	    error = 0;
+	    if (error == 0)
+		td->td_retval[0] = linux_no_adapter;
 	    break;
 
 	default:
