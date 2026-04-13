@@ -89,7 +89,6 @@ static int amrd_detach(device_t dev);
 static	disk_open_t	amrd_open;
 static	disk_strategy_t	amrd_strategy;
 
-static devclass_t	amrd_devclass;
 #ifdef FREEBSD_4
 int			amr_disks_registered = 0;
 #endif
@@ -107,7 +106,7 @@ static driver_t amrd_driver = {
     sizeof(struct amrd_softc)
 };
 
-DRIVER_MODULE(amrd, amr, amrd_driver, amrd_devclass, 0, 0);
+DRIVER_MODULE(amrd, amr, amrd_driver, 0, 0);
 
 static int
 amrd_open(struct disk *dp)

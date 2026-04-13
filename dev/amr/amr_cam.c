@@ -93,8 +93,6 @@ static void	amr_cam_poll(struct cam_sim *sim);
 static void	amr_cam_complete(struct amr_command *ac);
 static int	amr_cam_command(struct amr_softc *sc, struct amr_command **acp);
 
-static devclass_t	amr_pass_devclass;
-
 static device_method_t	amr_pass_methods[] = {
 	DEVMETHOD(device_probe,		amr_cam_probe),
 	DEVMETHOD(device_attach,	amr_cam_attach),
@@ -108,7 +106,7 @@ static driver_t	amr_pass_driver = {
 	0
 };
 
-DRIVER_MODULE(amrp, amr, amr_pass_driver, amr_pass_devclass, 0, 0);
+DRIVER_MODULE(amrp, amr, amr_pass_driver, 0, 0);
 MODULE_DEPEND(amrp, cam, 1, 1, 1);
 
 static MALLOC_DEFINE(M_AMRCAM, "amrcam", "AMR CAM memory");
