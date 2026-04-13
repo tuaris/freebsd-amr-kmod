@@ -32,12 +32,12 @@ pkg install amr-kmod
 
 ### Manual build
 
-Requires FreeBSD kernel source headers in `/usr/src/sys`.
+Requires FreeBSD kernel source headers (`/usr/src/sys` or `SYSDIR`).
 
 ```sh
 cd modules/amr
 make
-make install
+sudo make install
 ```
 
 ## Loading
