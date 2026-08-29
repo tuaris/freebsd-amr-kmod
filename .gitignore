@@ -1,0 +1,29 @@
+# FreeBSD kernel module build artifacts (bsd.kmod.mk)
+
+# Built modules and object files
+*.ko
+*.o
+*.debug
+
+# Make dependency files
+.depend*
+
+# Generated interface headers (bus_if.m, device_if.m, pci_if.m, ...)
+*_if.h
+
+# Generated kernel option headers
+opt_*.h
+
+# Symbol export lists
+export_syms
+
+# Symlinks into the kernel source tree created at build time
+machine
+x86
+i386
+amd64
+
+# Editor/OS cruft
+*~
+.*.sw?
+.DS_Store
